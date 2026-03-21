@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PerfilUsuario {
+  ATENDENTE
+  GERENTE
+}
+
+enum StatusOS {
+  ABERTA
+  AGUARDANDO_APROVACAO
+  APROVADA
+  PRONTA
+  PAGA
+  REPROVADA
+}
+
+enum TipoEquipamento {
+  MAQUINA
+  MOTOR
+  BOMBA_SUBMERSA
+  OUTROS
+}
+
+enum CanalComunicacao {
+  LIGACAO
+  MENSAGEM
+}
+
+enum FormaPagamento {
+  DINHEIRO
+  PIX
+  CHEQUE
+}
+
+model Usuario {
+  id        String        @id @default(cuid())
+  nome      String
+  email     String        @unique
+  senha     String
+  perfil    PerfilUsuario @default(ATENDENTE)
+  ativo     Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  ordensServico OrdemServico[]
+
+  @@map("usuarios")
+}
+
+model Cliente {
+  id        String   @id @default(cuid())
+  tipo      String   // "PF" | "PJ"
+  documento String   @unique // CPF ou CNPJ (somente dígitos)
+  nome      String
+  telefone  String
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ordensServico OrdemServico[]
+
+  @@map("clientes")
+}
+
+model OrdemServico {
+  id             String   @id @default(cuid())
+  numero         String   @unique // OS-YYYY-NNNN
+  status         StatusOS @default(ABERTA)
+  prazoPrometido DateTime?
+  observacoes    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+
+  usuarioId String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  equipamento Equipamento?
+  orcamento   Orcamento?
+  avisos      AvisoCliente[]
+  pagamento   Pagamento?
+
+  @@map("ordens_servico")
+}
+
+model OSCounter {
+  ano    Int @id
+  ultimo Int @default(0)
+
+  @@map("os_counter")
+}
+
+model Equipamento {
+  id               String          @id @default(cuid())
+  tipo             TipoEquipamento
+  marca            String?
+  modelo           String?
+  problemaRelatado String
+  createdAt        DateTime        @default(now())
+
+  osId String       @unique
+  os   OrdemServico @relation(fields: [osId], references: [id], onDelete: Cascade)
+
+  @@map("equipamentos")
+}
+
+model Orcamento {
+  id                  String            @id @default(cuid())
+  descricaoManutencao String
+  valor               Decimal           @db.Decimal(10, 2)
+  aprovado            Boolean? // null=aguardando, true=aprovado, false=reprovado
+  dataDecisao         DateTime?
+  canalComunicacao    CanalComunicacao?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  osId String       @unique
+  os   OrdemServico @relation(fields: [osId], references: [id], onDelete: Cascade)
+
+  @@map("orcamentos")
+}
+
+model AvisoCliente {
+  id         String           @id @default(cuid())
+  canal      CanalComunicacao
+  dataAviso  DateTime         @default(now())
+  observacao String?
+  createdAt  DateTime         @default(now())
+
+  osId String
+  os   OrdemServico @relation(fields: [osId], references: [id], onDelete: Cascade)
+
+  @@map("avisos_cliente")
+}
+
+model Pagamento {
+  id            String         @id @default(cuid())
+  forma         FormaPagamento
+  valor         Decimal        @db.Decimal(10, 2)
+  dataPagamento DateTime       @default(now())
+  observacao    String?
+  createdAt     DateTime       @default(now())
+
+  osId String       @unique
+  os   OrdemServico @relation(fields: [osId], references: [id], onDelete: Cascade)
+
+  @@map("pagamentos")
+}
