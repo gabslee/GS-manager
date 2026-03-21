@@ -23,7 +23,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!parsed.success) return null
 
           const { prisma } = await import("@/lib/prisma")
-          const usuario = await prisma.usuario.findUnique({
+          const usuario = await prisma.usuario.findFirst({
             where: { email: parsed.data.email, ativo: true },
           })
           if (!usuario) return null
