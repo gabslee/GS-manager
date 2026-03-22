@@ -20,6 +20,7 @@ import {
 import Link from "next/link"
 import { ArrowLeft, Plus, Phone, Mail, ChevronRight } from "lucide-react"
 import { IS_MOCK } from "@/lib/mock/data"
+import { EditarClienteButton } from "@/components/clientes/EditarClienteButton"
 
 async function getClienteDetail(id: string) {
   if (IS_MOCK) {
@@ -65,6 +66,7 @@ export default async function ClienteDetailPage({ params }: { params: { id: stri
             {formatarDocumento(cliente.documento, cliente.tipo as "PF" | "PJ")}
           </p>
         </div>
+        <EditarClienteButton cliente={cliente} />
       </div>
 
       {/* Contato */}

@@ -12,6 +12,7 @@ import {
 } from "@/lib/utils/formatters"
 import Link from "next/link"
 import { ArrowLeft, FileText, CheckCircle, Banknote, CheckSquare } from "lucide-react"
+import { FotoEquipamento } from "@/components/os/FotoEquipamento"
 
 const TIPO_EQUIPAMENTO_LABEL: Record<string, string> = {
   MAQUINA: "Máquina",
@@ -204,11 +205,7 @@ export default async function OSDetailPage({ params }: { params: { id: string } 
             <p className="text-sm leading-relaxed">{os.equipamento.problemaRelatado}</p>
             {os.equipamento.fotoBase64 && (
               <div className="pt-2">
-                <img
-                  src={os.equipamento.fotoBase64}
-                  alt="Foto do equipamento"
-                  className="rounded-lg w-full max-h-64 object-cover border"
-                />
+                <FotoEquipamento src={os.equipamento.fotoBase64} />
               </div>
             )}
           </CardContent>
@@ -285,6 +282,88 @@ export default async function OSDetailPage({ params }: { params: { id: string } 
           </CardContent>
         </Card>
       )}
+
+      {/* Histórico */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            Histórico
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ol className="relative border-l border-slate-200 space-y-4 ml-2">
+            {/* OS aberta */}
+            <HistoricoItem
+              data={os.createdAt}
+              titulo="OS aberta"
+              descricao={`Atendente: ${os.usuario.nome}`}
+              cor="bg-blue-500"
+            />
+
+            {/* Orçamento lançado */}
+            {os.orcamento && (
+              <HistoricoItem
+                data={os.orcamento.createdAt}
+                titulo="Orçamento lançado"
+                descricao={`${formatarMoeda(Number(os.orcamento.valor))} — ${os.orcamento.descricaoManutencao}`}
+                cor="bg-yellow-500"
+              />
+            )}
+
+            {/* Decisão do cliente */}
+            {os.orcamento?.dataDecisao && (
+              <HistoricoItem
+                data={os.orcamento.dataDecisao}
+                titulo={os.orcamento.aprovado ? "Orçamento aprovado" : "Orçamento reprovado"}
+                descricao={os.orcamento.canalComunicacao ? `Via ${CANAL_LABEL[os.orcamento.canalComunicacao] ?? os.orcamento.canalComunicacao}` : undefined}
+                cor={os.orcamento.aprovado ? "bg-green-500" : "bg-red-500"}
+              />
+            )}
+
+            {/* Avisos */}
+            {os.avisos.map((aviso) => (
+              <HistoricoItem
+                key={aviso.id}
+                data={aviso.dataAviso}
+                titulo="Cliente avisado"
+                descricao={[CANAL_LABEL[aviso.canal] ?? aviso.canal, aviso.observacao].filter(Boolean).join(" — ")}
+                cor="bg-purple-500"
+              />
+            ))}
+
+            {/* Pagamento */}
+            {os.pagamento && (
+              <HistoricoItem
+                data={os.pagamento.dataPagamento}
+                titulo="Pagamento registrado"
+                descricao={`${formatarMoeda(Number(os.pagamento.valor))} · ${FORMA_PAGAMENTO_LABEL[os.pagamento.forma] ?? os.pagamento.forma}`}
+                cor="bg-gray-700"
+              />
+            )}
+          </ol>
+        </CardContent>
+      </Card>
     </div>
+  )
+}
+
+function HistoricoItem({
+  data,
+  titulo,
+  descricao,
+  cor,
+}: {
+  data: Date | string
+  titulo: string
+  descricao?: string
+  cor: string
+}) {
+  return (
+    <li className="ml-4">
+      <span className={`absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border-2 border-white ${cor}`} />
+      <p className="text-sm font-medium leading-tight">{titulo}</p>
+      <p className="text-xs text-muted-foreground">{formatarDataHora(data)}</p>
+      {descricao && <p className="text-xs text-slate-600 mt-0.5">{descricao}</p>}
+    </li>
   )
 }
