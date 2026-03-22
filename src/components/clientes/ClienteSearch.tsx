@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useEffect, useRef } from "react"
 import { buscarClientes } from "@/actions/clientes"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { formatarDocumento } from "@/lib/utils/formatters"
 
 type Cliente = {
@@ -22,37 +21,69 @@ interface ClienteSearchProps {
 export function ClienteSearch({ onSelect }: ClienteSearchProps) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<Cliente[]>([])
-  const [isPending, startTransition] = useTransition()
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  function handleSearch() {
-    startTransition(async () => {
+  useEffect(() => {
+    if (query.length < 2) {
+      setResults([])
+      setOpen(false)
+      return
+    }
+    const timer = setTimeout(async () => {
+      setLoading(true)
       const data = await buscarClientes(query)
       setResults(data as Cliente[])
-    })
+      setOpen(true)
+      setLoading(false)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [query])
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  function handleSelect(c: Cliente) {
+    setQuery("")
+    setResults([])
+    setOpen(false)
+    onSelect(c)
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-2">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="Buscar por nome ou CPF/CNPJ..."
-        />
-        <Button type="button" variant="secondary" onClick={handleSearch} disabled={isPending}>
-          {isPending ? "Buscando..." : "Buscar"}
-        </Button>
-      </div>
-
-      {results.length > 0 && (
-        <div className="border rounded-lg divide-y">
+    <div ref={containerRef} className="relative">
+      <Input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Digite o nome ou CPF/CNPJ do cliente..."
+        className="h-11"
+        autoComplete="off"
+      />
+      {loading && (
+        <p className="text-xs text-muted-foreground mt-1 px-1">Buscando...</p>
+      )}
+      {open && results.length === 0 && !loading && query.length >= 2 && (
+        <div className="absolute z-20 w-full mt-1 bg-white border rounded-xl shadow-md px-4 py-3">
+          <p className="text-sm text-muted-foreground">Nenhum cliente encontrado para &quot;{query}&quot;</p>
+        </div>
+      )}
+      {open && results.length > 0 && (
+        <div className="absolute z-20 w-full mt-1 bg-white border rounded-xl shadow-md divide-y overflow-hidden">
           {results.map((c) => (
             <button
               key={c.id}
               type="button"
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors"
-              onClick={() => onSelect(c)}
+              className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleSelect(c)}
             >
               <p className="font-medium">{c.nome}</p>
               <p className="text-sm text-muted-foreground">
@@ -61,10 +92,6 @@ export function ClienteSearch({ onSelect }: ClienteSearchProps) {
             </button>
           ))}
         </div>
-      )}
-
-      {results.length === 0 && query && (
-        <p className="text-sm text-muted-foreground">Nenhum cliente encontrado para &quot;{query}&quot;</p>
       )}
     </div>
   )

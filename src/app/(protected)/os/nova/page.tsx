@@ -109,11 +109,15 @@ export default function NovaOSPage() {
       .replace(/^\w/, (c) => c.toUpperCase())
 
     const problemaRelatado = formData.get("equipamento.problemaRelatado") as string
+    const marca = formData.get("equipamento.marca") as string
+    const modelo = formData.get("equipamento.modelo") as string
     const observacoes = formData.get("observacoes") as string
     const prazo = formData.get("prazoPrometido") as string
 
+    const equipamentoDesc = [tipoFormatado, marca, modelo].filter(Boolean).join(" ")
+
     const linhas = [
-      `Olá, ${clienteSelecionado.nome}! Recebemos o seu *${tipoFormatado}* para manutenção.`,
+      `Olá, ${clienteSelecionado.nome}! Recebemos o seu *${equipamentoDesc}* para manutenção.`,
       ``,
       `*OS:* ${result.numero}`,
       `*Problema relatado:* ${problemaRelatado}`,
