@@ -91,6 +91,7 @@ export async function mockAbrirOS(formData: FormData) {
     marca: (formData.get("equipamento.marca") as string) || null,
     modelo: (formData.get("equipamento.modelo") as string) || null,
     problemaRelatado: formData.get("equipamento.problemaRelatado") as string,
+    fotoBase64: (formData.get("equipamento.foto") as string) || null,
     createdAt: new Date(),
   })
 

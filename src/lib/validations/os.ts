@@ -6,6 +6,7 @@ export const equipamentoSchema = z.object({
   marca: z.string().optional(),
   modelo: z.string().optional(),
   problemaRelatado: z.string().min(5, "Descreva o problema relatado"),
+  foto: z.string().optional(),
 })
 
 export const novaOSSchema = z.object({

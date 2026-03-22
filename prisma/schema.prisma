@@ -105,6 +105,7 @@ model Equipamento {
   marca            String?
   modelo           String?
   problemaRelatado String
+  fotoBase64       String?
   createdAt        DateTime        @default(now())
 
   osId String       @unique

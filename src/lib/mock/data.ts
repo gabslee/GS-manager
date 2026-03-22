@@ -22,6 +22,7 @@ export type MockEquipamento = {
   marca: string | null
   modelo: string | null
   problemaRelatado: string
+  fotoBase64: string | null
   createdAt: Date
 }
 
@@ -173,12 +174,12 @@ export const ordens: MockOS[] = [
 ]
 
 export const equipamentos: MockEquipamento[] = [
-  { id: "eq-1", osId: "os-1", tipo: "MOTOR", marca: "WEG", modelo: "W22 1HP", problemaRelatado: "Motor não liga após partida", createdAt: new Date("2026-03-20") },
-  { id: "eq-2", osId: "os-2", tipo: "BOMBA_SUBMERSA", marca: "Schneider", modelo: "BCS-550", problemaRelatado: "Bomba perdendo pressão, possível desgaste no impelidor", createdAt: new Date("2026-03-18") },
-  { id: "eq-3", osId: "os-3", tipo: "MAQUINA", marca: "Siemens", modelo: null, problemaRelatado: "Máquina de solda com arco instável", createdAt: new Date("2026-03-15") },
-  { id: "eq-4", osId: "os-4", tipo: "MOTOR", marca: "Voges", modelo: "4P 3CV", problemaRelatado: "Superaquecimento durante operação contínua", createdAt: new Date("2026-03-10") },
-  { id: "eq-5", osId: "os-5", tipo: "BOMBA_SUBMERSA", marca: "Pedrollo", modelo: "4SR6/7", problemaRelatado: "Sem vazão, ruído anormal no eixo", createdAt: new Date("2026-03-05") },
-  { id: "eq-6", osId: "os-6", tipo: "OUTROS", marca: null, modelo: null, problemaRelatado: "Quadro de comando com disjuntor disparando constantemente", createdAt: new Date("2026-03-08") },
+  { id: "eq-1", osId: "os-1", tipo: "MOTOR", marca: "WEG", modelo: "W22 1HP", problemaRelatado: "Motor não liga após partida", fotoBase64: null, createdAt: new Date("2026-03-20") },
+  { id: "eq-2", osId: "os-2", tipo: "BOMBA_SUBMERSA", marca: "Schneider", modelo: "BCS-550", problemaRelatado: "Bomba perdendo pressão, possível desgaste no impelidor", fotoBase64: null, createdAt: new Date("2026-03-18") },
+  { id: "eq-3", osId: "os-3", tipo: "MAQUINA", marca: "Siemens", modelo: null, problemaRelatado: "Máquina de solda com arco instável", fotoBase64: null, createdAt: new Date("2026-03-15") },
+  { id: "eq-4", osId: "os-4", tipo: "MOTOR", marca: "Voges", modelo: "4P 3CV", problemaRelatado: "Superaquecimento durante operação contínua", fotoBase64: null, createdAt: new Date("2026-03-10") },
+  { id: "eq-5", osId: "os-5", tipo: "BOMBA_SUBMERSA", marca: "Pedrollo", modelo: "4SR6/7", problemaRelatado: "Sem vazão, ruído anormal no eixo", fotoBase64: null, createdAt: new Date("2026-03-05") },
+  { id: "eq-6", osId: "os-6", tipo: "OUTROS", marca: null, modelo: null, problemaRelatado: "Quadro de comando com disjuntor disparando constantemente", fotoBase64: null, createdAt: new Date("2026-03-08") },
 ]
 
 export const orcamentos: MockOrcamento[] = [

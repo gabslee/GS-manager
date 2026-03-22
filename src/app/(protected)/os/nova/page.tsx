@@ -47,12 +47,30 @@ export default function NovaOSPage() {
   const [mostrarFormCliente, setMostrarFormCliente] = useState(false)
   const [tipoEquipamento, setTipoEquipamento] = useState("")
   const [fotoPreview, setFotoPreview] = useState<string | null>(null)
+  const [fotoBase64, setFotoBase64] = useState<string | null>(null)
 
-  function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (file) {
-      setFotoPreview(URL.createObjectURL(file))
-    }
+    if (!file) return
+    setFotoPreview(URL.createObjectURL(file))
+    const base64 = await new Promise<string>((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement("canvas")
+        const MAX = 1024
+        let { width, height } = img
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round((height * MAX) / width); width = MAX }
+          else { width = Math.round((width * MAX) / height); height = MAX }
+        }
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext("2d")!.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL("image/jpeg", 0.7))
+      }
+      img.src = URL.createObjectURL(file)
+    })
+    setFotoBase64(base64)
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -70,6 +88,7 @@ export default function NovaOSPage() {
     const formData = new FormData(e.currentTarget)
     formData.set("clienteId", clienteSelecionado.id)
     formData.set("equipamento.tipo", tipoEquipamento)
+    if (fotoBase64) formData.set("equipamento.foto", fotoBase64)
 
     const result = await abrirOS(formData)
     setLoading(false)

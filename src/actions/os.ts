@@ -26,6 +26,7 @@ export async function abrirOS(formData: FormData) {
       marca: formData.get("equipamento.marca"),
       modelo: formData.get("equipamento.modelo"),
       problemaRelatado: formData.get("equipamento.problemaRelatado"),
+      foto: formData.get("equipamento.foto") || undefined,
     },
   }
 
@@ -47,6 +48,7 @@ export async function abrirOS(formData: FormData) {
             marca: parsed.data.equipamento.marca || null,
             modelo: parsed.data.equipamento.modelo || null,
             problemaRelatado: parsed.data.equipamento.problemaRelatado,
+            fotoBase64: parsed.data.equipamento.foto || null,
           },
         },
       },

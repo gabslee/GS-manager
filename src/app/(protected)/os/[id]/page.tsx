@@ -202,6 +202,15 @@ export default async function OSDetailPage({ params }: { params: { id: string } 
               )}
             </div>
             <p className="text-sm leading-relaxed">{os.equipamento.problemaRelatado}</p>
+            {os.equipamento.fotoBase64 && (
+              <div className="pt-2">
+                <img
+                  src={os.equipamento.fotoBase64}
+                  alt="Foto do equipamento"
+                  className="rounded-lg w-full max-h-64 object-cover border"
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
