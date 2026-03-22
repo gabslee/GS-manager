@@ -21,6 +21,8 @@ import Link from "next/link"
 import { ArrowLeft, Plus, Phone, Mail, ChevronRight } from "lucide-react"
 import { IS_MOCK } from "@/lib/mock/data"
 import { EditarClienteButton } from "@/components/clientes/EditarClienteButton"
+import { DeletarClienteButton } from "@/components/clientes/DeletarClienteButton"
+import { getSession } from "@/lib/get-session"
 
 async function getClienteDetail(id: string) {
   if (IS_MOCK) {
@@ -44,8 +46,9 @@ async function getClienteDetail(id: string) {
 }
 
 export default async function ClienteDetailPage({ params }: { params: { id: string } }) {
-  const cliente = await getClienteDetail(params.id)
+  const [cliente, session] = await Promise.all([getClienteDetail(params.id), getSession()])
   if (!cliente) notFound()
+  const isGerente = session?.user.perfil === "GERENTE"
 
   return (
     <div className="max-w-3xl space-y-4 md:space-y-6">
@@ -66,7 +69,10 @@ export default async function ClienteDetailPage({ params }: { params: { id: stri
             {formatarDocumento(cliente.documento, cliente.tipo as "PF" | "PJ")}
           </p>
         </div>
-        <EditarClienteButton cliente={cliente} />
+        <div className="flex items-center gap-1">
+          <EditarClienteButton cliente={cliente} />
+          {isGerente && <DeletarClienteButton clienteId={cliente.id} clienteNome={cliente.nome} />}
+        </div>
       </div>
 
       {/* Contato */}

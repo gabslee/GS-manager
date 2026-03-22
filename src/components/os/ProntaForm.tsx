@@ -41,24 +41,28 @@ export function ProntaForm({ osId, clienteNome, clienteTelefone, equipamentoTipo
       return
     }
 
-    toast.success("OS marcada como pronta! Abrindo WhatsApp...")
-
-    const telefoneDigitos = clienteTelefone.replace(/\D/g, "")
-    const telefoneWA = telefoneDigitos.startsWith("55") ? telefoneDigitos : `55${telefoneDigitos}`
-
-    const tipoFormatado = equipamentoTipo
-      .replace(/_/g, " ")
-      .toLowerCase()
-      .replace(/^\w/, (c) => c.toUpperCase())
-
-    const linhas = [
-      `Olá, ${clienteNome}! O seu *${tipoFormatado}* está pronto para retirada.`,
-      ``,
-      `Pode vir buscar quando quiser.`,
-    ]
-
-    const url = `https://wa.me/${telefoneWA}?text=${encodeURIComponent(linhas.join("\n"))}`
-    window.open(url, "_blank", "noopener,noreferrer")
+    if (canal === "MENSAGEM") {
+      if (result.whatsappEnviado) {
+        toast.success("OS marcada como pronta! Mensagem enviada via WhatsApp.")
+      } else {
+        toast.success("OS marcada como pronta! Abrindo WhatsApp...")
+        const telefoneDigitos = clienteTelefone.replace(/\D/g, "")
+        const telefoneWA = telefoneDigitos.startsWith("55") ? telefoneDigitos : `55${telefoneDigitos}`
+        const tipoFormatado = equipamentoTipo
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/^\w/, (c) => c.toUpperCase())
+        const linhas = [
+          `Olá, ${clienteNome}! O seu *${tipoFormatado}* está pronto para retirada.`,
+          ``,
+          `Pode vir buscar quando quiser.`,
+        ]
+        const url = `https://wa.me/${telefoneWA}?text=${encodeURIComponent(linhas.join("\n"))}`
+        window.open(url, "_blank", "noopener,noreferrer")
+      }
+    } else {
+      toast.success("OS marcada como pronta!")
+    }
 
     router.push(`/os/${osId}`)
   }

@@ -61,6 +61,24 @@ export async function atualizarCliente(id: string, formData: FormData) {
   return { success: true }
 }
 
+export async function deletarCliente(id: string) {
+  const session = await auth()
+  if (!session || session.user.perfil !== "GERENTE") throw new Error("Acesso negado")
+
+  if (IS_MOCK) {
+    const { mockDeletarCliente } = await import("@/lib/mock/actions")
+    return mockDeletarCliente(id)
+  }
+
+  const { prisma } = await import("@/lib/prisma")
+  const count = await prisma.ordemServico.count({ where: { clienteId: id } })
+  if (count > 0) return { error: `Cliente possui ${count} ordem(ns) de serviço e não pode ser excluído` }
+
+  await prisma.cliente.delete({ where: { id } })
+  revalidatePath("/clientes")
+  return { success: true }
+}
+
 export async function buscarClientes(query: string) {
   const session = await auth()
   if (!session) return []

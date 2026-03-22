@@ -59,6 +59,18 @@ export async function mockAtualizarCliente(id: string, formData: FormData) {
   return { success: true }
 }
 
+// ── deletarCliente ────────────────────────────────────────────────────────────
+export async function mockDeletarCliente(id: string) {
+  const idx = clientes.findIndex((c) => c.id === id)
+  if (idx === -1) return { error: "Cliente não encontrado" }
+
+  const count = ordens.filter((o) => o.clienteId === id).length
+  if (count > 0) return { error: `Cliente possui ${count} ordem(ns) de serviço e não pode ser excluído` }
+
+  clientes.splice(idx, 1)
+  return { success: true }
+}
+
 // ── abrirOS ───────────────────────────────────────────────────────────────────
 export async function mockAbrirOS(formData: FormData) {
   const clienteId = formData.get("clienteId") as string
@@ -96,6 +108,26 @@ export async function mockAbrirOS(formData: FormData) {
   })
 
   return { success: true, osId, numero }
+}
+
+// ── deletarOS ─────────────────────────────────────────────────────────────────
+export async function mockDeletarOS(osId: string) {
+  const idx = ordens.findIndex((o) => o.id === osId)
+  if (idx === -1) return { error: "OS não encontrada" }
+
+  ordens.splice(idx, 1)
+
+  // Remove registros relacionados em memória
+  const remover = <T extends { osId: string }>(arr: T[]) => {
+    const i = arr.findIndex((x) => x.osId === osId)
+    if (i !== -1) arr.splice(i, 1)
+  }
+  remover(equipamentos)
+  remover(orcamentos)
+  remover(pagamentos)
+  avisos.splice(0, avisos.length, ...avisos.filter((a) => a.osId !== osId))
+
+  return { success: true }
 }
 
 // ── lancarOrcamento ───────────────────────────────────────────────────────────
@@ -165,7 +197,7 @@ export async function mockMarcarPronta(osId: string, formData: FormData) {
 
   ordens[idx] = { ...ordens[idx], status: "PRONTA", updatedAt: new Date() }
 
-  return { success: true }
+  return { success: true, whatsappEnviado: false }
 }
 
 // ── registrarPagamento ────────────────────────────────────────────────────────

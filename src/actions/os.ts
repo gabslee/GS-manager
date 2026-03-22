@@ -77,7 +77,13 @@ export async function marcarPronta(osId: string, formData: FormData) {
   const { prisma } = await import("@/lib/prisma")
   const { assertTransicao } = await import("@/lib/utils/status-machine")
 
-  const os = await prisma.ordemServico.findUniqueOrThrow({ where: { id: osId } })
+  const os = await prisma.ordemServico.findUniqueOrThrow({
+    where: { id: osId },
+    include: {
+      cliente: { select: { nome: true, telefone: true } },
+      equipamento: { select: { tipo: true } },
+    },
+  })
   assertTransicao(os.status, "PRONTA")
 
   await prisma.$transaction([
@@ -95,6 +101,33 @@ export async function marcarPronta(osId: string, formData: FormData) {
     }),
   ])
 
+  let whatsappEnviado = false
+  if (canal === "MENSAGEM" && os.equipamento) {
+    const { enviarMensagemOSPronta } = await import("@/lib/services/whatsapp")
+    const result = await enviarMensagemOSPronta({
+      telefone: os.cliente.telefone,
+      clienteNome: os.cliente.nome,
+      equipamentoTipo: os.equipamento.tipo,
+      osNumero: os.numero,
+    })
+    whatsappEnviado = "messageId" in result
+  }
+
   revalidatePath(`/os/${osId}`)
+  return { success: true, whatsappEnviado }
+}
+
+export async function deletarOS(osId: string) {
+  const session = await auth()
+  if (!session || session.user.perfil !== "GERENTE") throw new Error("Acesso negado")
+
+  if (IS_MOCK) {
+    const { mockDeletarOS } = await import("@/lib/mock/actions")
+    return mockDeletarOS(osId)
+  }
+
+  const { prisma } = await import("@/lib/prisma")
+  await prisma.ordemServico.delete({ where: { id: osId } })
+  revalidatePath("/os")
   return { success: true }
 }

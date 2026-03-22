@@ -13,6 +13,8 @@ import {
 import Link from "next/link"
 import { ArrowLeft, FileText, CheckCircle, Banknote, CheckSquare } from "lucide-react"
 import { FotoEquipamento } from "@/components/os/FotoEquipamento"
+import { DeletarOSButton } from "@/components/os/DeletarOSButton"
+import { getSession } from "@/lib/get-session"
 
 const TIPO_EQUIPAMENTO_LABEL: Record<string, string> = {
   MAQUINA: "Máquina",
@@ -36,8 +38,9 @@ const FORMA_PAGAMENTO_LABEL: Record<string, string> = {
 }
 
 export default async function OSDetailPage({ params }: { params: { id: string } }) {
-  const os = await getOSById(params.id)
+  const [os, session] = await Promise.all([getOSById(params.id), getSession()])
   if (!os) notFound()
+  const isGerente = session?.user.perfil === "GERENTE"
 
   return (
     <div className="max-w-3xl space-y-4 md:space-y-6">
@@ -58,6 +61,7 @@ export default async function OSDetailPage({ params }: { params: { id: string } 
             {formatarDataHora(os.createdAt)} · {os.usuario.nome}
           </p>
         </div>
+        {isGerente && <DeletarOSButton osId={os.id} osNumero={os.numero} />}
       </div>
 
       {/* Ação conforme status */}
