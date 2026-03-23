@@ -29,7 +29,8 @@ export function formatarCNPJ(cnpj: string): string {
   return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5")
 }
 
-export function formatarDocumento(documento: string, tipo: "PF" | "PJ"): string {
+export function formatarDocumento(documento: string | null, tipo: "PF" | "PJ"): string {
+  if (!documento) return "—"
   if (tipo === "PF") return formatarCPF(documento)
   return formatarCNPJ(documento)
 }

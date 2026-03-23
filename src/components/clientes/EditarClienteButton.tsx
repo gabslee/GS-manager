@@ -12,7 +12,7 @@ import { Pencil, X } from "lucide-react"
 type ClienteData = {
   id: string
   tipo: string
-  documento: string
+  documento: string | null
   nome: string
   telefone: string
   email: string | null
@@ -79,8 +79,16 @@ export function EditarClienteButton({ cliente }: { cliente: ClienteData }) {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="edit-documento" className="text-xs">{tipo === "PF" ? "CPF" : "CNPJ"}</Label>
-            <Input id="edit-documento" name="documento" defaultValue={cliente.documento} required />
+            <Label htmlFor="edit-documento" className="text-xs">
+              {tipo === "PF" ? "CPF" : "CNPJ"}
+              {tipo === "PF" && <span className="text-muted-foreground font-normal"> (opcional)</span>}
+            </Label>
+            <Input
+              id="edit-documento"
+              name="documento"
+              defaultValue={cliente.documento ?? ""}
+              required={tipo === "PJ"}
+            />
           </div>
 
           <div className="space-y-1">

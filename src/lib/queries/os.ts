@@ -7,7 +7,7 @@ export type OSListItem = {
   status: StatusOS
   prazoPrometido: Date | null
   createdAt: Date
-  cliente: { nome: string; documento: string }
+  cliente: { nome: string; documento: string | null }
   equipamento: { tipo: string; problemaRelatado: string } | null
 }
 

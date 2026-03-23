@@ -7,7 +7,7 @@ export const IS_MOCK = process.env.MOCK_DB === "true"
 export type MockCliente = {
   id: string
   tipo: string
-  documento: string
+  documento: string | null
   nome: string
   telefone: string
   email: string | null

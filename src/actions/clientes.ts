@@ -19,11 +19,15 @@ export async function criarCliente(formData: FormData) {
   if (!parsed.success) return { error: parsed.error.flatten() }
 
   const { prisma } = await import("@/lib/prisma")
-  const existing = await prisma.cliente.findUnique({ where: { documento: parsed.data.documento } })
-  if (existing) return { error: "Documento já cadastrado" }
+  const documento = parsed.data.documento || null
+
+  if (documento) {
+    const existing = await prisma.cliente.findUnique({ where: { documento } })
+    if (existing) return { error: "Documento já cadastrado" }
+  }
 
   const cliente = await prisma.cliente.create({
-    data: { ...parsed.data, email: parsed.data.email || null },
+    data: { ...parsed.data, documento, email: parsed.data.email || null },
   })
 
   revalidatePath("/clientes")
@@ -51,9 +55,10 @@ export async function atualizarCliente(id: string, formData: FormData) {
   if (!parsed.success) return { error: parsed.error.flatten() }
 
   const { prisma } = await import("@/lib/prisma")
+  const documento = parsed.data.documento || null
   await prisma.cliente.update({
     where: { id },
-    data: { ...parsed.data, email: parsed.data.email || null },
+    data: { ...parsed.data, documento, email: parsed.data.email || null },
   })
 
   revalidatePath(`/clientes/${id}`)

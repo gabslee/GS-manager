@@ -80,12 +80,15 @@ export function ClienteForm({ onSuccess, onCancel }: ClienteFormProps) {
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="documento">{tipo === "PF" ? "CPF" : "CNPJ"}</Label>
+        <Label htmlFor="documento">
+          {tipo === "PF" ? "CPF" : "CNPJ"}
+          {tipo === "PF" && <span className="text-muted-foreground font-normal"> (opcional)</span>}
+        </Label>
         <Input
           id="documento"
           name="documento"
           placeholder={tipo === "PF" ? "000.000.000-00" : "00.000.000/0000-00"}
-          required
+          required={tipo === "PJ"}
         />
       </div>
 

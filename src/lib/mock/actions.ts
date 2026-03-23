@@ -14,9 +14,13 @@ import { StatusOS, TipoEquipamento, CanalComunicacao, FormaPagamento } from "@pr
 
 // ── criarCliente ──────────────────────────────────────────────────────────────
 export async function mockCriarCliente(formData: FormData) {
-  const documento = (formData.get("documento") as string).replace(/\D/g, "")
-  const existing = clientes.find((c) => c.documento === documento)
-  if (existing) return { error: "Documento já cadastrado" }
+  const documentoRaw = (formData.get("documento") as string).replace(/\D/g, "")
+  const documento = documentoRaw || null
+
+  if (documento) {
+    const existing = clientes.find((c) => c.documento === documento)
+    if (existing) return { error: "Documento já cadastrado" }
+  }
 
   const id = cuid()
   clientes.push({
@@ -49,7 +53,7 @@ export async function mockAtualizarCliente(id: string, formData: FormData) {
   clientes[idx] = {
     ...clientes[idx],
     tipo: formData.get("tipo") as string,
-    documento: (formData.get("documento") as string).replace(/\D/g, ""),
+    documento: (formData.get("documento") as string).replace(/\D/g, "") || null,
     nome: formData.get("nome") as string,
     telefone: (formData.get("telefone") as string).replace(/\D/g, ""),
     email: (formData.get("email") as string) || null,

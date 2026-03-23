@@ -8,7 +8,7 @@ import { formatarDocumento } from "@/lib/utils/formatters"
 type Cliente = {
   id: string
   nome: string
-  documento: string
+  documento: string | null
   tipo: string
   telefone: string
   email: string | null
