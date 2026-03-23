@@ -47,12 +47,14 @@ export function DeletarOSButton({ osId, osNumero }: DeletarOSButtonProps) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 md:h-auto md:w-auto md:px-3">
-          <Trash2 className="h-4 w-4" />
-          <span className="hidden md:inline ml-1.5">Excluir</span>
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger
+        render={
+          <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 md:h-auto md:w-auto md:px-3">
+            <Trash2 className="h-4 w-4" />
+            <span className="hidden md:inline ml-1.5">Excluir</span>
+          </Button>
+        }
+      />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Excluir OS {osNumero}?</AlertDialogTitle>
