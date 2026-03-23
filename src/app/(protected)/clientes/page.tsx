@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { formatarDocumento, formatarTelefone } from "@/lib/utils/formatters"
 import Link from "next/link"
-import { Plus, ChevronRight, Phone } from "lucide-react"
+import { Plus, ChevronRight, Phone, Upload } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { IS_MOCK } from "@/lib/mock/data"
 
@@ -47,12 +47,20 @@ export default async function ClientesPage({ searchParams }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl md:text-2xl font-bold">Clientes</h1>
-        <Link href="/clientes/novo" className="hidden md:block">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Cliente
-          </Button>
-        </Link>
+        <div className="hidden md:flex gap-2">
+          <Link href="/clientes/importar">
+            <Button variant="outline">
+              <Upload className="h-4 w-4 mr-2" />
+              Importar
+            </Button>
+          </Link>
+          <Link href="/clientes/novo">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Cliente
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <form className="flex gap-2">
