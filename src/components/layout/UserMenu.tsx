@@ -36,12 +36,14 @@ export function UserMenu() {
           <p className="text-xs text-muted-foreground">{session.user.email}</p>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="text-red-600 cursor-pointer"
-          onClick={() => { window.location.href = "/api/sair" }}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sair
+        <DropdownMenuItem className="p-0">
+          <a
+            href="/sair"
+            className="flex w-full items-center px-1.5 py-1 text-red-600"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sair
+          </a>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
