@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { abrirOS } from "@/actions/os"
 import { ClienteSearch } from "@/components/clientes/ClienteSearch"
 import { ClienteForm } from "@/components/clientes/ClienteForm"
@@ -42,8 +42,18 @@ const EQUIPAMENTOS = [
 
 export default function NovaOSPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
-  const [clienteSelecionado, setClienteSelecionado] = useState<ClienteSelecionado | null>(null)
+  const [clienteSelecionado, setClienteSelecionado] = useState<ClienteSelecionado | null>(() => {
+    const id = searchParams.get("clienteId")
+    const nome = searchParams.get("clienteNome")
+    const tipo = searchParams.get("clienteTipo")
+    const telefone = searchParams.get("clienteTelefone")
+    if (id && nome && tipo && telefone) {
+      return { id, nome, tipo, telefone, documento: searchParams.get("clienteDoc") }
+    }
+    return null
+  })
   const [mostrarFormCliente, setMostrarFormCliente] = useState(false)
   const [tipoEquipamento, setTipoEquipamento] = useState("")
   const [fotoPreview, setFotoPreview] = useState<string | null>(null)

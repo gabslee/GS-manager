@@ -105,7 +105,7 @@ export default async function ClienteDetailPage({ params }: { params: { id: stri
               ({cliente.ordensServico.length})
             </span>
           </h2>
-          <Link href="/os/nova">
+          <Link href={`/os/nova?clienteId=${cliente.id}&clienteNome=${encodeURIComponent(cliente.nome)}&clienteTipo=${cliente.tipo}&clienteTelefone=${encodeURIComponent(cliente.telefone)}${cliente.documento ? `&clienteDoc=${encodeURIComponent(cliente.documento)}` : ""}`}>
             <Button size="sm" className="h-8">
               <Plus className="h-3.5 w-3.5 mr-1.5" />
               Nova OS

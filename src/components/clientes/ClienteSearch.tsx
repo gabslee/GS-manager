@@ -31,6 +31,8 @@ export function ClienteSearch({ onSelect }: ClienteSearchProps) {
       setOpen(false)
       return
     }
+    setResults([])
+    setOpen(false)
     const timer = setTimeout(async () => {
       setLoading(true)
       const data = await buscarClientes(query)
@@ -76,7 +78,7 @@ export function ClienteSearch({ onSelect }: ClienteSearchProps) {
         </div>
       )}
       {open && results.length > 0 && (
-        <div className="absolute z-20 w-full mt-1 bg-white border rounded-xl shadow-md divide-y overflow-hidden">
+        <div className="absolute z-20 w-full mt-1 bg-white border rounded-xl shadow-md divide-y overflow-y-auto max-h-60">
           {results.map((c) => (
             <button
               key={c.id}
