@@ -1,7 +1,7 @@
 "use client"
 
-import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
+import { sair } from "@/actions/auth"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +39,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600 cursor-pointer"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => sair()}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sair
