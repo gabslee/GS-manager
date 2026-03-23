@@ -98,11 +98,12 @@ export async function buscarClientes(query: string) {
   }
 
   const { prisma } = await import("@/lib/prisma")
+  const docQuery = query.replace(/\D/g, "")
   return prisma.cliente.findMany({
     where: {
       OR: [
         { nome: { contains: query, mode: "insensitive" } },
-        { documento: { contains: query.replace(/\D/g, "") } },
+        ...(docQuery.length > 0 ? [{ documento: { contains: docQuery } }] : []),
       ],
     },
     orderBy: { nome: "asc" },
