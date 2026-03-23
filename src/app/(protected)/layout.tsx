@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/layout/Sidebar"
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
 import { IS_MOCK } from "@/lib/mock/data"
 import { Zap } from "lucide-react"
+import { sair } from "@/actions/auth"
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession()
@@ -31,7 +32,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
               {session.user.perfil}
             </span>
             {!IS_MOCK && (
-              <form action="/api/auth/signout" method="POST">
+              <form action={sair}>
                 <button type="submit" className="text-xs text-red-500 hover:underline ml-2">
                   Sair
                 </button>
