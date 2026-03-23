@@ -114,7 +114,7 @@ export function mockBuscarClientes(query: string) {
   return clientes.filter(
     (c) =>
       c.nome.toLowerCase().includes(query.toLowerCase()) ||
-      c.documento.includes(q)
+      c.documento?.includes(q)
   )
 }
 
@@ -139,7 +139,7 @@ export function mockGetClientes(q?: string) {
     result = clientes.filter(
       (c) =>
         c.nome.toLowerCase().includes(q.toLowerCase()) ||
-        c.documento.includes(q.replace(/\D/g, ""))
+        c.documento?.includes(q.replace(/\D/g, ""))
     )
   }
   return result.map((c) => ({

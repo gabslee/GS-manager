@@ -12,7 +12,7 @@ type ClienteCriado = {
   nome: string
   telefone: string
   tipo: string
-  documento: string
+  documento: string | null
 }
 
 interface ClienteFormProps {

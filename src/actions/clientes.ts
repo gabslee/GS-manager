@@ -19,7 +19,9 @@ export async function criarCliente(formData: FormData) {
   if (!parsed.success) return { error: parsed.error.flatten() }
 
   const { prisma } = await import("@/lib/prisma")
-  const documento = parsed.data.documento || null
+  const { documento: docRaw, email: emailRaw, ...restData } = parsed.data
+  const documento = docRaw || null
+  const email = emailRaw || null
 
   if (documento) {
     const existing = await prisma.cliente.findUnique({ where: { documento } })
@@ -27,7 +29,7 @@ export async function criarCliente(formData: FormData) {
   }
 
   const cliente = await prisma.cliente.create({
-    data: { ...parsed.data, documento, email: parsed.data.email || null },
+    data: { ...restData, documento, email },
   })
 
   revalidatePath("/clientes")
@@ -55,10 +57,12 @@ export async function atualizarCliente(id: string, formData: FormData) {
   if (!parsed.success) return { error: parsed.error.flatten() }
 
   const { prisma } = await import("@/lib/prisma")
-  const documento = parsed.data.documento || null
+  const { documento: docRaw, email: emailRaw, ...restData } = parsed.data
+  const documento = docRaw || null
+  const email = emailRaw || null
   await prisma.cliente.update({
     where: { id },
-    data: { ...parsed.data, documento, email: parsed.data.email || null },
+    data: { ...restData, documento, email },
   })
 
   revalidatePath(`/clientes/${id}`)

@@ -28,7 +28,7 @@ import Link from "next/link"
 type ClienteSelecionado = {
   id: string
   nome: string
-  documento: string
+  documento: string | null
   tipo: string
   telefone: string
 }
