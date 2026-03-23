@@ -1,7 +1,6 @@
 "use client"
 
-import { useSession } from "next-auth/react"
-import { sair } from "@/actions/auth"
+import { useSession, signOut } from "next-auth/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +38,10 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600 cursor-pointer"
-          onClick={() => sair()}
+          onClick={async () => {
+            await signOut({ redirect: false })
+            window.location.href = "/login"
+          }}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sair
